@@ -1,5 +1,7 @@
 package io.induct.quanta;
 
+import com.google.common.base.Stopwatch;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,11 +26,14 @@ class Experiment<V> {
                 throw new InvalidExperimentException("Control variant is missing");
             }
         }
+        if (exp.candidate == null) {
+            throw new InvalidExperimentException("Candidate variant is missing");
+        }
         this.exp = exp;
     }
 
     public V run() {
-        Stopwatch controlTimer = new Stopwatch(name, "control");
+        Stopwatch controlTimer = Stopwatch.createStarted();
         V controlResult = null;
         RuntimeException controlEx = null;
         try {
@@ -38,9 +43,9 @@ class Experiment<V> {
         } finally {
             controlTimer.stop();
         }
-
+        System.out.println("\tcontrolTimer = " + controlTimer);
         if (exp.enabled.call(name)) {
-            Stopwatch candidateTimer = new Stopwatch(name, "candidate");
+            Stopwatch candidateTimer = Stopwatch.createStarted();
             V candidateResult = null;
             try {
                 candidateResult = exp.candidate.call();
@@ -49,12 +54,13 @@ class Experiment<V> {
             } finally {
                 candidateTimer.stop();
             }
+            System.out.println("\tcandidateTimer = " + candidateTimer);
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("context", exp.context.call());
             payload.put("control", controlResult);
             payload.put("candidate", candidateResult);
 
-            if (exp.equalTo.apply(controlResult, candidateResult)) {
+            if (exp.match.apply(controlResult, candidateResult)) {
                 // publish match
                 System.out.println("\t'" + name + "' experiment match! control was " + controlResult + ", candidate was " + candidateResult);
             } else {
@@ -68,9 +74,4 @@ class Experiment<V> {
         return controlResult;
     }
 
-    private static class InvalidExperimentException extends RuntimeException {
-        public InvalidExperimentException(String message) {
-            super(message);
-        }
-    }
 }

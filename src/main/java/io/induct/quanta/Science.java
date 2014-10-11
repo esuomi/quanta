@@ -20,7 +20,7 @@ public class Science {
                 (e) -> {
                     e.control   = ()     -> { sleep(300); return "John"; };
                     e.candidate = ()     -> { sleep(20); return "Jack"; };
-                    e.equalTo   = (a, b) -> b.charAt(0) == b.charAt(0);
+                    e.match = (a, b) -> b.charAt(0) == b.charAt(0);
                     e.enabled   = (name) -> Math.random() > 0.5;
                     e.context   = () -> {
                         Map<String, Object> ctx = new HashMap<>();

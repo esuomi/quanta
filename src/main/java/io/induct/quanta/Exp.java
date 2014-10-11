@@ -11,7 +11,7 @@ import java.util.function.BiFunction;
 public class Exp<V> {
     public Variant<V> control = null;
     public Variant<V> candidate = null;
-    public BiFunction<V, V, Boolean> equalTo = Objects::equals;
+    public BiFunction<V, V, Boolean> match = Objects::equals;
     public Enabler enabled = (name) -> false;
     public Publisher publish = (name, payload) -> {};
     public Context context = () -> Collections.EMPTY_MAP;
