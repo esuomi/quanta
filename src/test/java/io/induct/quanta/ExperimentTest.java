@@ -1,10 +1,12 @@
 package io.induct.quanta;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class ExperimentTest {
@@ -93,11 +95,25 @@ public class ExperimentTest {
         assertTrue("Experiment should not have failed", publishedReport.resultsMatch());
     }
 
-        /*
+    @Test
+    public void canBeGivenExtraContextForReport() throws Exception {
+        Experiment<Integer> numbers = new Experiment<>("numbers", (e) -> {
+            e.control   = ()     -> 1;
+            e.candidate = ()     -> 2;
+            e.enabled   = (name) -> ALWAYS;
+            e.context   = ()     -> ImmutableMap.of("description", "experiment on even/odd numbers");
+            e.publish   = testPublisher;
+        });
+        numbers.run();
+        assertThat("description was not in published report payload",
+                publishedReport.getPayload().get("description"),
+                is("experiment on even/odd numbers"));
+    }
+
+    /*
          TODO: to reach feature parity...
             *) e.cleaner - Kind of against this since Maps in Java are legendarily terrible...
             *) feature flag helper
-            *) reports aren't even close to what dat-science has
             *) dat-analysis equivalent?
           */
 }

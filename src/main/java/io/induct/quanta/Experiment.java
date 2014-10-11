@@ -42,49 +42,37 @@ public class Experiment<V> {
     }
 
     public V run() {
-        Stopwatch controlTimer = Stopwatch.createStarted();
-        V controlResult = null;
-        RuntimeException controlEx = null;
-        try {
-            controlResult = exp.control.call();
-        } catch (RuntimeException e) {
-            controlEx = e;
-        } finally {
-            controlTimer.stop();
-        }
-
+        Report.Details<V> controlReport = runVariant(exp.control);
         if (exp.enabled.call(name)) {
-            Stopwatch candidateTimer = Stopwatch.createStarted();
-            V candidateResult = null;
-            RuntimeException candidateEx = null;
-            try {
-                candidateResult = exp.candidate.call();
-            } catch (RuntimeException candidateE) {
-                candidateEx = candidateE;
-            } finally {
-                candidateTimer.stop();
-            }
-
-            Map<String, Object> payload = new LinkedHashMap<>();
-            payload.put("context", exp.context.call());
-            payload.put("control", controlResult);
-            payload.put("candidate", candidateResult);
-
-            boolean match = exp.match.apply(controlResult, candidateResult);
+            Report.Details<V> candidateReport = runVariant(exp.candidate);
+            boolean match = exp.match.apply(controlReport.getResult(), candidateReport.getResult());
             // TODO: Hook https://dropwizard.github.io/ lib here for automatic result publishing
             if (match) {
                 // publish match
             } else {
                 // publish mismatch
             }
-            Report.Details<V> controlReport = new Report.Details<>(controlTimer, controlResult, controlEx);
-            Report.Details<V> candidateReport = new Report.Details<>(candidateTimer, candidateResult, candidateEx);
-            Report<V> report = new Report<>(name, match, payload, controlReport, candidateReport);
+
+            Report<V> report = new Report<>(name, match, exp.context.call(), controlReport, candidateReport);
             exp.publish.report(report);
         }
 
-        if (controlEx != null) throw controlEx;
-        return controlResult;
+        if (controlReport.getEx() != null) throw controlReport.getEx();
+        return controlReport.getResult();
+    }
+
+    private Report.Details<V> runVariant(Variant<V> variant) {
+        Stopwatch variantTimer = Stopwatch.createStarted();
+        V variantResult = null;
+        RuntimeException variantEx = null;
+        try {
+            variantResult = variant.call();
+        } catch (RuntimeException candidateE) {
+            variantEx = candidateE;
+        } finally {
+            variantTimer.stop();
+        }
+        return new Report.Details<>(variantTimer, variantResult, variantEx);
     }
 
 }
