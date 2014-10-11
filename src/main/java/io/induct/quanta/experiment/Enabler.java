@@ -1,4 +1,4 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 /**
  * Control enabling of the experiment. Experiment name is provided for additional lookups such as feature flag based

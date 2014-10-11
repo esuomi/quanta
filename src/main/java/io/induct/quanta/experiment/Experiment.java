@@ -1,4 +1,4 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
@@ -12,7 +12,7 @@ import com.google.common.base.Strings;
  * @since 11.10.2014
  * @param <V> Result value of the experiment path.
  *
- * @see io.induct.quanta.Methodology
+ * @see Methodology
  */
 public class Experiment<V> {
     private final String name;

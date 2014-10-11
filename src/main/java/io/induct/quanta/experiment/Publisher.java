@@ -1,4 +1,4 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 /**
  * Use to capture published report of the experiment run. Only called when candidate has also been executed.

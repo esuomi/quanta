@@ -1,4 +1,4 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 public final class Exp<V> {
     /**
      * Exp is not meant to be externally instantiable. If you want to share your experiment methodology, store a
-     * reference to {@link io.induct.quanta.Methodology} instead.
+     * reference to {@link Methodology} instead.
      */
     Exp() {}
 
