@@ -1,4 +1,4 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 /**
  * Thrown whenever the experiment is deemed invalid, usually due to incorrect configuration.

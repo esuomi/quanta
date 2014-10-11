@@ -1,10 +1,9 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 import com.google.common.collect.ImmutableMap;
+import io.induct.quanta.experiment.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;

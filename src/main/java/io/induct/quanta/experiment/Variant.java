@@ -1,4 +1,4 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 /**
  * Variant describes critical code path being experimented on.

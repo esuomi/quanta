@@ -1,12 +1,12 @@
-package io.induct.quanta;
+package io.induct.quanta.experiment;
 
 /**
- * Capturing container for {@link io.induct.quanta.Experiment#Experiment(String, Methodology)} to create a readable DSL.
+ * Capturing container for {@link Experiment#Experiment(String, Methodology)} to create a readable DSL.
  *
  * @author Esko Suomi <suomi.esko@gmail.com>
  * @since 11.10.2014
  * @param <V> Result value of the experiment path.
- * @see io.induct.quanta.Exp
+ * @see Exp
  */
 public interface Methodology<V> {
     /**
