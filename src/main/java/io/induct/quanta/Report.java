@@ -2,15 +2,23 @@ package io.induct.quanta;
 
 import com.google.common.base.Stopwatch;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
+ * Describe execution of the experiment.
+ *
  * @author Esko Suomi <suomi.esko@gmail.com>
  * @since 11.10.2014
+ * @param <V> Result value of the experiment path.
  */
-public class Report<V> {
+public final class Report<V> {
 
-    public static class Details<V> {
+    /**
+     * Variant report details.
+     * @param <V> Result value of the experiment path.
+     */
+    final static class Details<V> {
 
         private final Stopwatch duration;
         private final V result;
@@ -40,8 +48,10 @@ public class Report<V> {
     private final Map<String, Object> payload;
     private final Details<V> control;
     private final Details<V> candidate;
+    private final LocalDateTime timestamp;
 
-    public Report(String experimentName, boolean match, Map<String, Object> payload, Details controlReport, Details candidateReport) {
+    Report(String experimentName, boolean match, Map<String, Object> payload, Details controlReport, Details candidateReport) {
+        this.timestamp = LocalDateTime.now();
         this.experiment = experimentName;
         this.match = match;
         this.payload = payload;
@@ -71,5 +81,9 @@ public class Report<V> {
 
     public Details<V> getCandidate() {
         return candidate;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 }

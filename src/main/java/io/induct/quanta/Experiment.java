@@ -3,13 +3,16 @@ package io.induct.quanta;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
+ * Use Experiment to test critical paths of your in-progress refactoring. Experiment is not an A/B test as it always
+ * returns the control result, Experiment merely tests whether the old and the new path results are equivalent and what
+ * is their performance.
+ *
  * @author Esko Suomi <suomi.esko@gmail.com>
  * @since 11.10.2014
- * @param <V>
+ * @param <V> Result value of the experiment path.
+ *
+ * @see io.induct.quanta.Methodology
  */
 public class Experiment<V> {
     private final String name;
@@ -26,7 +29,7 @@ public class Experiment<V> {
         }
 
         Exp<V> exp = new Exp<>();
-        methodology.call(exp);
+        methodology.describe(exp);
 
         if (exp.control == null) {
             if (exp.candidate == null) {
@@ -43,7 +46,7 @@ public class Experiment<V> {
 
     public V run() {
         Report.Details<V> controlReport = runVariant(exp.control);
-        if (exp.enabled.call(name)) {
+        if (exp.enabled.enabled(name)) {
             Report.Details<V> candidateReport = runVariant(exp.candidate);
             boolean match = exp.match.apply(controlReport.getResult(), candidateReport.getResult());
             // TODO: Hook https://dropwizard.github.io/ lib here for automatic result publishing
@@ -53,8 +56,8 @@ public class Experiment<V> {
                 // publish mismatch
             }
 
-            Report<V> report = new Report<>(name, match, exp.context.call(), controlReport, candidateReport);
-            exp.publish.report(report);
+            Report<V> report = new Report<>(name, match, exp.context.provide(), controlReport, candidateReport);
+            exp.publish.publish(report);
         }
 
         if (controlReport.getEx() != null) throw controlReport.getEx();
