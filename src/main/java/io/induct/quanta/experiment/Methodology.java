@@ -63,5 +63,18 @@ public interface Methodology<V> {
          * executed.
          */
         public Context context = () -> Collections.EMPTY_MAP;
+
+        public void validate() {
+            if (control == null) {
+                if (candidate == null) {
+                    throw new InvalidExperimentException("Both control and candidate variants are missing");
+                } else {
+                    throw new InvalidExperimentException("Control variant is missing");
+                }
+            }
+            if (candidate == null) {
+                throw new InvalidExperimentException("Candidate variant is missing");
+            }
+        }
     }
 }
