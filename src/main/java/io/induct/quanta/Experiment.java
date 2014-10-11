@@ -6,18 +6,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
-* @author Esko Suomi <suomi.esko@gmail.com>
-* @since 11.10.2014
-*/
-class Experiment<V> {
+ * @author Esko Suomi <suomi.esko@gmail.com>
+ * @since 11.10.2014
+ * @param <V>
+ */
+public class Experiment<V> {
     private final String name;
     private final Exp<V> exp;
 
-    public Experiment(String name, Variants<V> variants) {
+    public Experiment(String name, Methodology<V> methodology) {
         this.name = name;
 
         Exp<V> exp = new Exp<>();
-        variants.call(exp);
+        methodology.call(exp);
 
         if (exp.control == null) {
             if (exp.candidate == null) {
