@@ -16,7 +16,7 @@ import com.google.common.base.Strings;
  */
 public class Experiment<V> {
     private final String name;
-    private final Exp<V> exp;
+    private final Methodology.Exp<V> exp;
 
     public Experiment(String name, Methodology<V> methodology) {
         if (Strings.isNullOrEmpty(name)) {
@@ -27,20 +27,9 @@ public class Experiment<V> {
         if (methodology == null) {
             throw new InvalidExperimentException("Methodology is null");
         }
-
-        Exp<V> exp = new Exp<>();
+        Methodology.Exp<V> exp = new Methodology.Exp<>();
         methodology.describe(exp);
-
-        if (exp.control == null) {
-            if (exp.candidate == null) {
-                throw new InvalidExperimentException("Both control and candidate variants are missing");
-            } else {
-                throw new InvalidExperimentException("Control variant is missing");
-            }
-        }
-        if (exp.candidate == null) {
-            throw new InvalidExperimentException("Candidate variant is missing");
-        }
+        exp.validate();
         this.exp = exp;
     }
 
