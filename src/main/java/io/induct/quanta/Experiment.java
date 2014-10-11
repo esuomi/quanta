@@ -52,18 +52,19 @@ public class Experiment<V> {
         } finally {
             controlTimer.stop();
         }
-        System.out.println("\tcontrolTimer = " + controlTimer);
+
         if (exp.enabled.call(name)) {
             Stopwatch candidateTimer = Stopwatch.createStarted();
             V candidateResult = null;
+            RuntimeException candidateEx = null;
             try {
                 candidateResult = exp.candidate.call();
             } catch (RuntimeException candidateE) {
-                // swallow
+                candidateEx = candidateE;
             } finally {
                 candidateTimer.stop();
             }
-            System.out.println("\tcandidateTimer = " + candidateTimer);
+
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("context", exp.context.call());
             payload.put("control", controlResult);
@@ -76,7 +77,9 @@ public class Experiment<V> {
             } else {
                 // publish mismatch
             }
-            Report report = new Report(name, match, payload);
+            Report.Details<V> controlReport = new Report.Details<>(controlTimer, controlResult, controlEx);
+            Report.Details<V> candidateReport = new Report.Details<>(candidateTimer, candidateResult, candidateEx);
+            Report<V> report = new Report<>(name, match, payload, controlReport, candidateReport);
             exp.publish.report(report);
         }
 
