@@ -7,5 +7,5 @@ import java.util.Map;
 * @since 11.10.2014
 */
 public interface Publisher {
-    void call(String experimentName, Map<String, Object> payload);
+    void report(Report report);
 }

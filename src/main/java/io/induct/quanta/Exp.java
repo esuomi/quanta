@@ -13,6 +13,6 @@ public class Exp<V> {
     public Variant<V> candidate = null;
     public BiFunction<V, V, Boolean> match = Objects::equals;
     public Enabler enabled = (name) -> false;
-    public Publisher publish = (name, payload) -> {};
+    public Publisher publish = (report) -> {};
     public Context context = () -> Collections.EMPTY_MAP;
 }

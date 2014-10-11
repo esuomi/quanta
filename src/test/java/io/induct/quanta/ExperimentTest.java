@@ -1,12 +1,46 @@
 package io.induct.quanta;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 public class ExperimentTest {
 
     private static final boolean ALWAYS = true;
+
+    private Publisher testPublisher;
+    private Report publishedReport;
+    private Methodology<Boolean> alwaysTrueMethodology = (e) -> {
+        e.control   = ()     -> true;
+        e.candidate = ()     -> true;
+        e.enabled   = (name) -> true;
+        e.publish   = testPublisher;
+    };
+
+    @Before
+    public void setUp() throws Exception {
+        testPublisher = (report) -> {
+            publishedReport = report;
+        };
+    }
+
+    @Test(expected = InvalidExperimentException.class)
+    public void mustHaveNonNullName() throws Exception {
+        Experiment<Boolean> misconfigured = new Experiment<>(null, alwaysTrueMethodology);
+    }
+
+    @Test(expected = InvalidExperimentException.class)
+    public void mustHaveNonEmptyName() throws Exception {
+        Experiment<Boolean> misconfigured = new Experiment<>("", alwaysTrueMethodology);
+    }
+
+    @Test(expected = InvalidExperimentException.class)
+    public void mustHaveNonNullMethodology() throws Exception {
+        Experiment<Boolean> misconfigured = new Experiment<>("invalid-methodology", null);
+    }
 
     @Test(expected = InvalidExperimentException.class)
     public void mustHaveBothControlAndCandidateSet() throws Exception {
@@ -53,8 +87,17 @@ public class ExperimentTest {
             e.candidate = ()     -> "Jack";
             e.match     = (a,b)  -> a.charAt(0) == b.charAt(0);
             e.enabled   = (name) -> ALWAYS;
+            e.publish   = testPublisher;
         });
         names.run();
-
+        assertTrue("Experiment should not have failed", publishedReport.resultsMatch());
     }
+
+        /*
+         TODO: to reach feature parity...
+            *) e.cleaner - Kind of against this since Maps in Java are legendarily terrible...
+            *) feature flag helper
+            *) reports aren't even close to what dat-science has
+            *) dat-analysis equivalent?
+          */
 }

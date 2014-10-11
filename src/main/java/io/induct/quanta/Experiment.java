@@ -1,6 +1,7 @@
 package io.induct.quanta;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,7 +16,14 @@ public class Experiment<V> {
     private final Exp<V> exp;
 
     public Experiment(String name, Methodology<V> methodology) {
+        if (Strings.isNullOrEmpty(name)) {
+            throw new InvalidExperimentException("Invalid name '" + name + "'. Experiment must have a non-null, non-empty name");
+        }
         this.name = name;
+
+        if (methodology == null) {
+            throw new InvalidExperimentException("Methodology is null");
+        }
 
         Exp<V> exp = new Exp<>();
         methodology.call(exp);
@@ -61,14 +69,15 @@ public class Experiment<V> {
             payload.put("control", controlResult);
             payload.put("candidate", candidateResult);
 
-            if (exp.match.apply(controlResult, candidateResult)) {
+            boolean match = exp.match.apply(controlResult, candidateResult);
+            // TODO: Hook https://dropwizard.github.io/ lib here for automatic result publishing
+            if (match) {
                 // publish match
-                System.out.println("\t'" + name + "' experiment match! control was " + controlResult + ", candidate was " + candidateResult);
             } else {
                 // publish mismatch
-                System.out.println("\t'" + name + "' experiment mismatch! control was " + controlResult + ", candidate was " + candidateResult);
             }
-            exp.publish.call(name, payload);
+            Report report = new Report(name, match, payload);
+            exp.publish.report(report);
         }
 
         if (controlEx != null) throw controlEx;
