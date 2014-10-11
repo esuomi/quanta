@@ -9,6 +9,9 @@ repositories {
 }
 
 dependencies {
+    // included mainly for Stopwatch and Map builders
+    compile group: 'com.google.guava', name:'guava', version:'18.0'
+
     // these are the EXACT dependencies one has to use when using the JUnit+Mockito combo to avoid Hamcrest
     // compilation/runtime problems
     testCompile group: 'junit', name: 'junit', version: '4.11'
